@@ -1,0 +1,5 @@
+#node modules
+/blog_frontend/node_modules/
+
+#env
+*.env
