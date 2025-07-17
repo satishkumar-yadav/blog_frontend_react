@@ -65,7 +65,7 @@ useEffect(() => {
               <span className="text-indigo-600 font-bold">
                 Hi {userData?.first_name} {userData?.last_name},
               </span>{" "}
-              Welcome to my site!
+              Welcome to my Blog Site!
             </h2>
 
             <p className="mt-3 text-white sm:mt-5 sm:text-md sm:max-w-xl sm:mx-auto md:mt-5">
