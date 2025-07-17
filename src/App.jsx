@@ -11,7 +11,7 @@ import Home from "./components/Home";
 import Login from "./components/Login";
 import Navbar from "./components/Navbar";
 import PersonalBlog from "./components/PersonalBlog";
-import Register from "./components/register";
+import Register from "./components/Register";
 import SessionManager from "./components/SessionManager";
 
 function App() {
