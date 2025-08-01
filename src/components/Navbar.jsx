@@ -1,13 +1,16 @@
-import axios from "axios";
+import { useSnackbar } from "notistack";
 import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import axios from "../api/axios";
 
 function Navbar() {
   const [loading, setLoading] = useState(false);
   const [userData, setUserData] = useState(null); // useState(null);
   // const [isLogin, setLogin] = useState("Login");
   const navigate = useNavigate();
+    const { enqueueSnackbar } = useSnackbar(); 
 
+  // Check login status from localStorage , other tab also affected
    const checkLoginStatus = () => {
     const storedUser = localStorage.getItem("user");
     if (storedUser) {
@@ -27,39 +30,53 @@ function Navbar() {
   const logOut = () => {
     setLoading(true); 
 
-    axios                                                 //  body, 
-      .post(`${import.meta.env.VITE_BACKEND_URL}/api/logout`, {}, { withCredentials: true, }  )
-
+    axios                                                
+      .post("/api/logout" )
       .then(function (response) {
-        // handle success
-        setLoading(false);
        // setLogin("Login");
         //   setMessage(response?.data?.message);
-        //   openSnackbar(response?.data?.message);
         localStorage.removeItem("user");
+        window.dispatchEvent(new Event("loginStatusChange"));
         setUserData(null);         // Trigger UI update  ///////
+        enqueueSnackbar(response?.data?.message, { variant: "success" });
         navigate("/login");
       })
 
       .catch(function (error) {
-        // handle error
-        setLoading(false);
-         console.error("Logout Error:", error.response?.data?.message || error.message);
-        //   setMessage(error?.response?.data?.message);
-        //console.log(error?.response?.data?.message);
+         enqueueSnackbar(error?.response?.data?.message, { variant: "success" });
+        // console.error("Logout Error:", error.response?.data?.message || error.message);
       })
-      
       .then(function () {
+         setLoading(false);
         // always executed
       });
   };
 
   useEffect(() => {
     checkLoginStatus();
-    window.addEventListener("storage", checkLoginStatus); // React to localStorage changes across tabs
+  
+    function onStorageChange(event) {
+      if (event.key === "user") {
+        checkLoginStatus();
+      }
+    }
+    //window.addEventListener("storage", checkLoginStatus); // React to localStorage changes across tabs
+    window.addEventListener("storage", onStorageChange);
 
-    return () => window.removeEventListener("storage", checkLoginStatus);
-  }, []);
+    // Also, listen for a custom event on the window to sync same-tab login/logout
+    function onLoginLogout() {
+      checkLoginStatus();
+    }
+    window.addEventListener("loginStatusChange", onLoginLogout);
+
+
+    return () => {
+      // window.removeEventListener("storage", checkLoginStatus);
+       window.removeEventListener("storage", onStorageChange);
+      window.removeEventListener("loginStatusChange", onLoginLogout);
+
+    };
+      }, []);
  
   /*
   useEffect(()=>{
@@ -105,31 +122,31 @@ function Navbar() {
         id="menu" >
             <div className="text-sm lg:flex-grow">
 
-                <a href="/"
+               <Link  to="/"
                    className="block mt-4 text-base lg:inline-block lg:mt-0 text-teal-200 hover:text-white mr-4"
                 >
                    Home
-                </a>
+                </Link>
 
-                <a href="/create"
+                 <Link  to="/create"
                    className="block mt-4 text-base lg:inline-block lg:mt-0 text-teal-200 hover:text-white mr-4"
                 >
                   Create Post
-                </a>
+                </Link>
 
                  {!userData && (
-                <a href="/register"
+                <Link  to="/register"
                    className="block mt-4 text-base lg:inline-block lg:mt-0 text-teal-200 hover:text-white mr-4"
                 >
                    Register
-                </a>
+                </Link>
                  )}
 
-                <a href="/personal"
+                <Link  to="/personal"
                    className="block mt-4 text-base lg:inline-block lg:mt-0 text-teal-200 hover:text-white mr-4"
                 >
                   My Post
-                </a>
+                </Link>
 
                  {userData ? (
             <div
@@ -139,12 +156,12 @@ function Navbar() {
               Log Out
             </div>
           ) : (
-            <a
-              href="/login"
+            <Link
+              to="/login"
               className="block mt-4 text-base lg:inline-block lg:mt-0 text-teal-200 hover:text-white mr-4"
             >
               Login
-            </a>
+            </Link>
           )}
 
             </div>

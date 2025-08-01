@@ -47,7 +47,7 @@ function App() {
           <Route exact path="/register" element={<Register />} />
           <Route exact path="/login" element={<Login />} />
           <Route exact path="/create" element={<CreateBlog />} />
-          <Route exact path="/detail/:id" element={<BlogDetails />} />
+          <Route exact path="/blogs/:id" element={<BlogDetails />} />
           <Route exact path="/personal" element={<PersonalBlog />} />
           <Route exact path="/edit/:id" element={<EditPost />} />
         </Routes>

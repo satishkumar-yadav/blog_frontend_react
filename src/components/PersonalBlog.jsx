@@ -1,46 +1,32 @@
+//import axios from "../api/axios";
 import axios from "axios";
 import { useSnackbar } from "notistack";
 import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 const PersonalBlog = () => {
   const [blogData, setBlogData] = useState();
   const [loading, setLoading] = useState(false);
   const [deleteLoading, setDeleteLoading] = useState(false);
   const navigate = useNavigate();
+  const { enqueueSnackbar } = useSnackbar(); 
 
    useEffect(() => {
-    const User = localStorage.getItem("user");
+    const User = localStorage.getItem("user"); 
     if (!User) {
+      enqueueSnackbar("Please Login First to view Your Blog", {variant: "warning",}); 
       navigate("/login");
     }
     uniqueBlog();
   }, []);
 
-  const options = {
-    position: "bottom-right",
-    style: {
-      backgroundColor: "gray",
-      border: "2px solid lightgreen",
-      color: "white",
-      fontFamily: "Menlo, monospace",
-      fontSize: "20px",
-      textAlign: "center",
-    },
-    closeStyle: {
-      color: "lightcoral",
-      fontSize: "16px",
-    },
-  };
-
- // const [openSnackbar] = useSnackbar(options);
-   const { enqueueSnackbar } = useSnackbar(); // ✅ from notistack
+   
 
   const uniqueBlog = () => {
     setLoading(true);
     axios
       .get(
-        `${import.meta.env.VITE_BACKEND_URL}/api/unique-blog`,
+        `${import.meta.env.VITE_BACKEND_URL}/api/myblogs`,
 
         {
           withCredentials: true,
@@ -50,21 +36,15 @@ const PersonalBlog = () => {
         }
       )
       .then(function (response) {
-        setLoading(false);
-        //setBlogData(response?.data?.data);
-        setBlogData(response?.data);
-        console.log(response?.data);
+        setBlogData(response?.data.blogs);
+        //console.log(response?.data);
       })
       .catch(function (error) {
-        setLoading(false);
-        enqueueSnackbar(error?.response?.data?.message || "Error fetching blogs", {
-          variant: "error",
-        });
-        //   setMessage(error?.response?.data?.message);
-        //   openSnackbar(error?.response?.data?.message);
-        //console.log(error?.response?.data?.message);
+        enqueueSnackbar(error?.response?.data?.message || "Error fetching blogs", {variant: "error", });
+      
       })
       .then(function () {
+         setLoading(false);
         // always executed
       });
   };
@@ -74,37 +54,25 @@ const PersonalBlog = () => {
     setDeleteLoading(true);
     axios
       .delete(
-        `${import.meta.env.VITE_BACKEND_URL}/api/delete-blog/${blog.id}`,
+        `${import.meta.env.VITE_BACKEND_URL}/api/delete-blog/${blog.ID}`,
 
         {
           withCredentials: true,
         }
       )
       .then(function (response) {
-        //setLoading(false);
-        //setBlogData(response?.data?.data);
-        setDeleteLoading(false);
-       // openSnackbar(response?.data?.message);
-        enqueueSnackbar(response?.data?.message || "Blog deleted successfully", {
-          variant: "success",
-        });
+        enqueueSnackbar(response?.data?.message || "Blog deleted successfully", {variant: "success",});
         
         uniqueBlog();
 
-        console.log(response?.data);
+       // console.log(response?.data);
       })
       .catch(function (error) {
-        // handle error
-        setDeleteLoading(false);
-         enqueueSnackbar(error?.response?.data?.message || "Delete failed", {
-          variant: "error",
-        });
-        //   setMessage(error?.response?.data?.message);
-        //openSnackbar(error?.response?.data?.message);
-        //console.log(error?.response?.data?.message);
+        enqueueSnackbar(error?.response?.data?.message || "Delete failed", { variant: "error", });
+      
       })
       .then(function () {
-        // always executed
+        setDeleteLoading(false);
       });
   };
 
@@ -115,40 +83,46 @@ const PersonalBlog = () => {
           <h1>You don't have post yet. Kindly create a post </h1>
         </div>
       )}
+
       {loading && (
         <div className="text-2xl font-bold text-center px-56 pt-24">
           <h1>LOADING.....</h1>
         </div>
       )}
+
+      
       <div className="container my-12 mx-auto px-4 md:px-12">
         <div className="flex flex-wrap -mx-1 lg:-mx-4">
           {blogData?.map((blog) => (
-            <div key={blog.id} className="my-1 px-1 w-full md:w-1/2 lg:my-4 lg:px-4 lg:w-1/3">
+            <div key={blog.ID} className="my-1 px-1 w-full md:w-1/2 lg:my-4 lg:px-4 lg:w-1/3">
+
               <article className="overflow-hidden rounded-lg shadow-lg">
-                <a href={`/detail/${blog.id}`}>
+                <Link to ={`/blogs/${blog.ID}`}>
                   <img
                     alt="Blog"
                     className="block h-72 w-full object-cover"
                     src={blog?.image}
                   />
-                </a>
+                </Link>
+
                 <header className="flex items-center justify-between leading-tight p-2 md:p-4">
                   <h1 className="text-lg">
-                    <a
+                    <Link
                       className="no-underline hover:underline text-black"
-                      href={`/detail/${blog.id}`}
+                      to ={`/blogs/${blog.ID}`}
                     >
                       {blog.title}
-                    </a>
+                    </Link>
                   </h1>
                   <p className="text-grey-darker text-sm">
                     {new Date(blog?.CreatedAt).toLocaleString()}
                   </p>
                 </header>
+
                 <footer className="flex items-center justify-between leading-none p-2 md:p-4">
-                  <a
+                  <Link
                     className="flex items-center no-underline hover:underline text-black"
-                    href={`/detail/${blog.id}`}
+                    to ={`/blogs/${blog.ID}`}
                   >
                     <img
                       alt="Author"
@@ -158,7 +132,8 @@ const PersonalBlog = () => {
                     <p className="ml-2 text-sm">
                       {blog?.user?.first_name} {blog?.user?.last_name}
                     </p>
-                  </a>
+                  </Link>
+
                   <div>
                     <button
                       onClick={() => deleteBtn(blog)}
@@ -169,13 +144,14 @@ const PersonalBlog = () => {
                     </button>
                   </div>
                   <div className="">
-                    <a href={`edit/${blog.id}`}>
+                    <Link to={`/edit/${blog.ID}`}>
                       <button className="bg-yellow-500 hover:bg-yellow-700 text-white font-bold py-2 px-4 rounded">
                         Edit
                       </button>
-                    </a>
+                    </Link>
                   </div>
                 </footer>
+
               </article>
             </div>
           ))}
