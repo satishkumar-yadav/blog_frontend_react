@@ -65,7 +65,7 @@ const Login = () => {
        // setLoading(false);
        // console.log( response)
         enqueueSnackbar(response?.data?.message || "Login successful", {variant: "success",});
-       //console.log(response?.data)
+       console.log(response?.data)
         localStorage.setItem("user", JSON.stringify(response?.data?.user));
         // Dispatch event to notify navbar about login change in same tab 
         window.dispatchEvent(new Event("loginStatusChange"));
@@ -74,7 +74,7 @@ const Login = () => {
       })
       .catch(function (error) {
        // setLoading(false);
-        //console.log( error)
+        console.log( error)
         const errorMsg = error?.response?.data?.message || "Login failed";
         setMessage(errorMsg);
          enqueueSnackbar(errorMsg, { variant: "error", });
