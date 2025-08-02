@@ -38,11 +38,11 @@ const PersonalBlog = () => {
       )
       .then(function (response) {
         setBlogData(response?.data.blogs);
-        //console.log(response?.data);
+        console.log(response?.data);
       })
       .catch(function (error) {
         enqueueSnackbar(error?.response?.data?.message || "Error fetching blogs", {variant: "error", });
-      
+        console.log(error?.response?.data);
       })
       .then(function () {
          setLoading(false);
