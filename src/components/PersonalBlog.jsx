@@ -12,14 +12,14 @@ const PersonalBlog = () => {
   const { enqueueSnackbar } = useSnackbar(); 
 
    useEffect(() => {
-    const User = localStorage.getItem("user"); 
+    const User = localStorage.getItem("user");  
     if (!User) {
       enqueueSnackbar("Please Login First to view Your Blog", {variant: "warning",}); 
       navigate("/login");
     }
     uniqueBlog();
   }, []);
-
+ 
    
 
   const uniqueBlog = () => {

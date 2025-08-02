@@ -32,7 +32,7 @@ function Navbar() {
 
     axios                                                
       .post("/api/logout" )
-      .then(function (response) {
+      .then(function (response) { 
        // setLogin("Login");
         //   setMessage(response?.data?.message);
         localStorage.removeItem("user");
@@ -43,7 +43,7 @@ function Navbar() {
       })
 
       .catch(function (error) {
-         enqueueSnackbar(error?.response?.data?.message, { variant: "success" });
+         enqueueSnackbar(error?.response?.data?.message, { variant: "error" });
         // console.error("Logout Error:", error.response?.data?.message || error.message);
       })
       .then(function () {
