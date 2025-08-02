@@ -15,7 +15,7 @@ const BlogDetail = () => {
     if (!User) { 
       enqueueSnackbar("Please Login to view Blog Detail !", { variant: "warning" });   
       navigate("/login"); 
-    
+     return ;
     }
   }, []);
 

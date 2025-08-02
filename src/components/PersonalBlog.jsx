@@ -16,6 +16,7 @@ const PersonalBlog = () => {
     if (!User) {
       enqueueSnackbar("Please Login First to view Your Blog", {variant: "warning",}); 
       navigate("/login");
+       return ;
     }
     uniqueBlog();
   }, []);

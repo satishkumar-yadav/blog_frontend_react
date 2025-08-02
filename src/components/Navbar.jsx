@@ -39,7 +39,7 @@ function Navbar() {
         window.dispatchEvent(new Event("loginStatusChange"));
         setUserData(null);         // Trigger UI update  ///////
         enqueueSnackbar(response?.data?.message, { variant: "success" });
-        navigate("/login");
+        navigate("/login"); 
       })
 
       .catch(function (error) {
